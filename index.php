@@ -200,7 +200,7 @@ if(get_the_modified_date('Y-m-d H:i:s') < $rapports[0]->received_at){
 
 }
 
-function custom_button_example($wp_admin_bar){
+function plagia_buttons_menu($wp_admin_bar){
 
 require_once(ABSPATH . 'wp-admin/includes/screen.php');
 $get_current_screen=get_current_screen();
@@ -279,7 +279,7 @@ if(isset($get_current_screen))
         
 }
 
-add_action('admin_bar_menu', 'custom_button_example', 100);
+add_action('admin_bar_menu', 'plagia_buttons_menu', 100);
 
 function plagia_activation()
 {

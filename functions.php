@@ -6,9 +6,9 @@ function plagia_redirect($url){
     $string .= '</script>';
     echo $string;
 }
-add_action( 'init', 'postmode' );
+add_action( 'init', 'plagia_postmode' );
 
-function postmode()
+function plagia_postmode()
 {
   global $wpdb;
 
