@@ -15,7 +15,6 @@ include(plugin_dir_path( __FILE__ ).'functions.php');
 define ('PLAGIA_VERSION', '0.9');
 
 
-
 function plagia_page()
 {
   add_menu_page( 'Plagiarism settings','Plagiarism', 'administrator', 'plagia', 
@@ -59,11 +58,6 @@ global $Puser;
 $Puser= $wpdb->get_results( "SELECT * FROM wp_plagia_users ");
 
 
-/*$query = new WP_Query( array( 'post_type' => array( 'page', 'product','post' ) ) );
-print_r($query);
-*/
-
-
 
 }
 
@@ -75,6 +69,9 @@ function plagia_admin_js(){
   wp_enqueue_script('palgia_js_admin', plugins_url( 'wp_plagiarism.js', __FILE__), array('jquery'), '1.0');
   wp_localize_script( 'palgia_js_admin', 'ajax_url',
             admin_url( 'admin-ajax.php' )  );
+  wp_localize_script( 'palgia_js_admin', 'site_url',
+            get_option("siteurl") );
+
 
     global $wpdb;
     global $Puser;
@@ -86,12 +83,6 @@ function plagia_admin_js(){
   wp_enqueue_style( 'bt_css', plugins_url( 'assets/css/bootstrap.min.css',__FILE__) );
   wp_enqueue_script( 'bt_js', plugins_url( 'assets/js/bootstrap.bundle.min.js',__FILE__) );
 
-
-/*wp_register_script('prefix_jquery1', '//code.jquery.com/jquery-1.12.4.js');
-wp_enqueue_script('prefix_jquery1');
-
-wp_register_script('prefix_jquery_ui', '//code.jquery.com/ui/1.12.1/jquery-ui.js');
-wp_enqueue_script('prefix_jquery_ui');*/
 
   wp_enqueue_script( 'dataTables_plagia_js',  plugins_url( 'assets/js/jquery.dataTables.js',__FILE__) );
   wp_enqueue_style( 'dataTables_plagia_css', plugins_url( 'assets/css/jquery.dataTables.css',__FILE__) );
@@ -121,8 +112,8 @@ $box='';
 // TEST IF C EST LE MME TEXTE DANS LE POSTE ACTUEL ET CELUI DE DERNIER RAPPORT
 global $wpdb;
  $rapports= $wpdb->get_results( "SELECT * FROM wp_plagia_rapports where post_id = ".get_the_ID()." order by created_at desc");
-
-if($rapports[0]->reponse != '')
+ if(sizeof($rapports)){
+  if($rapports[0]->reponse != '')
 {
 
 
@@ -178,6 +169,9 @@ if(get_the_modified_date('Y-m-d H:i:s') < $rapports[0]->received_at){
   }
 
 }
+ }
+
+
 
    $box .='<label>'.__("Choisir le mode de vérification","wp_plagia").' :</label>';
     $box.='<br>

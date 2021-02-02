@@ -192,13 +192,6 @@
 
       <td class="text-center">
 
-       
-<?php 
-
-// instantiate and use the dompdf class
-
-?>  
-
 <a id="dwn_<?php echo $elm->id ?>" ><span role="button" class="dashicons dashicons-pdf exportPDF" data-id="<?php echo $elm->id ?>"></span></a>
    
       </td>

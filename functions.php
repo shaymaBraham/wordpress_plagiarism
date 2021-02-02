@@ -6,12 +6,40 @@ function plagia_redirect($url){
     $string .= '</script>';
     echo $string;
 }
+add_action( 'init', 'postmode' );
+
+function postmode()
+{
+  global $wpdb;
+
+  $data=file_get_contents('php://input');
+
+if ( isset( $_GET['ref'] ))
+{
+  
+
+  $obj=json_decode($data);
+  $id=$obj->ref;
+
+
+
+  $wpdb->query( $wpdb->prepare("UPDATE wp_plagia_rapports 
+                SET reponse = %s , received_at = %s
+             WHERE id = %s",$data, date('Y-m-d H:i:s'),$id)
+    );
+}
+
+
+
+
+}
+
 
 use Dompdf\Dompdf;
 function plagia_pdf(){
 
 if(isset($_POST['rapp_id'])){
-  $id_rapport=$_POST['rapp_id'];
+  $id_rapport=(int)$_POST['rapp_id'];
 
   ob_start();  
 require_once (plugin_dir_path( __FILE__ ).'include/dompdf/autoload.inc.php');
@@ -85,12 +113,12 @@ global $wpdb;
 if(isset($_POST['mode']))
   {
 
-  $mode=$_POST['mode'];
+  $mode=(int)$_POST['mode'];
   $ref="Ref".rand ( );
   $text=sanitize_textarea_field($_POST['text']);
 
 if(isset($_POST['postID']))
-  $postID=$_POST['postID'];
+  $postID=(int)$_POST['postID'];
 else
   $postID=null;
 
@@ -186,7 +214,7 @@ if(isset($_POST['id']))
   {
 
 
-  $id=$_POST['id'];
+  $id=(int)$_POST['id'];
  $res= $wpdb->get_results( "SELECT * FROM wp_plagia_rapports where id= ".$id);
  echo  json_encode($res[0]);
 
@@ -210,8 +238,8 @@ global $wpdb;
 if(isset($_POST['id']))
   {
 
-  	     $id_rapport=$_POST['id'];
-  	     $reponse=json_encode($_POST['response']);
+  	     $id_rapport=(int)$_POST['id'];
+  	     $reponse=sanitize_text_field(json_encode($_POST['response']));
 
 
  $table_name  = $wpdb->prefix."plagia_rapports";
@@ -245,7 +273,7 @@ if(isset($_POST['id']))
   {
 
 
-  $id=$_POST['id'];
+  $id=(int)$_POST['id'];
   $myPost=get_post($id);
   $content=sanitize_text_field($myPost->post_content);
   

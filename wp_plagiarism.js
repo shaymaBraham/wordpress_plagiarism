@@ -297,7 +297,7 @@ let content=''
                          mode:     'post',
                          ref:  id_rapport,
                          domain : $user.domaine,
-                         postback_url: 'http://wp.insightful.pro/wp-content/plugins/plagia/post_mode.php'
+                         postback_url: site_url+'?ref='+reference
 
                       },
                       success:function(reponse)
@@ -653,7 +653,7 @@ $('#checkAuto').on('click',function(){
                 },
                  error: function (xhr, ajaxOptions, thrownError) {
                 // this error case means that the ajax call, itself, failed, e.g., a syntax error
-                // in your_function()
+                // in plagia_getpost_byID()
                 alert ('Request failed: ' + thrownError.message) ;
                 },
             }) ;
@@ -669,7 +669,7 @@ function check_automatique(mode,text,id_post)
 {
    let id_rapport;
    let mode_req;
-
+   let reference;
    //adding the new rapport
     $.ajax({
 
@@ -688,6 +688,8 @@ function check_automatique(mode,text,id_post)
 
 
                     id_rapport=$.parseJSON(resp).id
+                    reference=$.parseJSON(resp).ref;
+
             
                     console.log('rapport added success',id_rapport)
 
@@ -793,14 +795,14 @@ function check_automatique(mode,text,id_post)
                          mode:     'post',
                          ref:  id_rapport,
                          domain : $user.domaine,
-                         postback_url: 'http://wp.insightful.pro/wp-content/plugins/plagia/post_mode.php'
+                         postback_url: site_url+'?ref='+reference
 
         
                       },
 
                       success: function(reponse){
                          
-console.log('802',reponse)
+
                          $.ajax({
 
                             url: ajax_url,
@@ -813,18 +815,29 @@ console.log('802',reponse)
 
                                   },
                               success: function (resp) {
-                                     // console.log(resp)
-                                     let  result=$.parseJSON($.parseJSON(resp).reponse);
+                                      console.log(resp)
+                                      myrapport=$.parseJSON(resp);
+                                      if(myrapport.reponse != '')
+                                      {
+                                         let  result=$.parseJSON(myrapport.reponse);
+          
+                                         console.log(result)
 
-                                     console.log(result)
+                                         if(result.success==1){
+                                             $('#result_'+id_post).html("<span style='font-weight:bold;color:blue'> voir le rapport : "+myrapport.ref+"</span>")
+                                           
+                                             $('#response_'+id_post).html('')
+                                           }
+                                         else{
 
-                                     if(result.success==1){
-                                         $('#result_'+id_post).html("<span style='font-weight:bold;color:"+getColor(result.unique)+"'>"+result.unique+"%</span>")
-                                      }
-                                     else{
-
-                                        $('#result_'+id_post).html("<span style='font-weight:bold:color:red'>ERROR</span>")
-                                      }
+                                            $('#result_'+id_post).html("<span style='font-weight:bold:color:red'>ERROR</span>")
+                                            }
+                                       }
+                                       else
+                                       {
+                                        console.log('errur reponse vide')
+                                       }
+                                     
                  
                     
                                   },
@@ -897,78 +910,6 @@ $('#save').on('click',function(){
 })
 
 /**********************************************************/
-
-$('#flesch').on('click',function(){
-var str = $("#texte").val();
-let words=str.split(' ').length
-         
-    let syllables=$count_how_many_syllables('texte')
-
-    const re = /[.!?]/;
-const numOfSentences = str.split(re);
-phrases=numOfSentences.length - 1;
-let totalsyl=0;
-syllables.forEach(function(elm){
-  totalsyl=totalsyl+elm;
-})
-let rslt='';
-rslt+='<span>Syllables : '+totalsyl+' </span><br><span>Mots : '+words+' </span>'
-rslt+='<br><span>Phrases : '+phrases+' </span>'
-
-Score=206.84-(1.015*words/phrases)-(84.6*(totalsyl/words))
-rslt+='<br><H2>Score Flesch: '+Score+' </H2>'
-
-
-    $('#result').html(rslt)
-
-
-  })
-
-
-
-function $count_how_many_syllables($input) {
-   
-        var arrayOfLines = $("[name=" + $input + "]").val().match(/[^\r\n]+/g);
-        
-        var tempArr = [];
-        var $content;
-        var word;
-        var $syllable_count;
-        var $result;
-
-        for (var i = 0; i < arrayOfLines.length; i++) {
-         
-            $content = arrayOfLines[i];
-            word = $content;
-            console.log('ici',word)
-            word = word.toLowerCase();
-            if (word.length <= 3) {
-                word = 1;
-            }
-            if (word.length === 0) {
-                return 0;
-            }
-            word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '')
-                .replace(/^y/, '')
-                .match(/[aeiouy]{1,2}/g).length;
-            $syllable_count = word;
-
-            $result = $syllable_count;
-            tempArr.push($result);
-        }
-
-        return tempArr;
-
-    
-}
-
-
-
-
-
-
-
-
 
  getColor = ($per)=> {
 
