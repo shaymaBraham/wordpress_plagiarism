@@ -617,9 +617,15 @@ $('#checkAuto').on('click',function(){
   var selectIDs = $("#auto-table input[name='selection']:checked").map(function(){
       return $(this).val();
     }).get(); 
+
+let test=false;
+
+let contents=[];
+
     selectIDs.forEach(function(elm){
 
-      $('#result_'+elm).html("<div class='spinner-border text-primary text-center' role='status'><span class='sr-only'>Loading...</span></div>")
+                      
+
        
 
         let mode=$('input[name="mode"]:checked').val();
@@ -642,13 +648,28 @@ $('#checkAuto').on('click',function(){
                        result=JSON.parse(resp);
                        
                        let myPost=result.Post;
-                       
-                       texte_verif=myPost.post_title+' '+result.content;
+                      // if(result.content != ''){
 
                       console.log(mode)
+                     
 
-                     check_automatique(mode,texte_verif,elm)
+                       if(result.content != ''){
+
+                       texte_verif=myPost.post_title+' '+result.content;
+
+                           contents[elm]=texte_verif
+
+                           test=true;
+                        }
+                       else
+                       {
+                         test=false;
+
+                       }
+                    // check_automatique(mode,texte_verif,elm)
                  
+
+                       
                     
                 },
                  error: function (xhr, ajaxOptions, thrownError) {
@@ -660,6 +681,29 @@ $('#checkAuto').on('click',function(){
       
       
     })
+
+if(test){
+  selectIDs.forEach(function(elm){
+
+          $('#result_'+elm).html("<div class='spinner-border text-primary text-center' role='status'><span class='sr-only'>Loading...</span></div>")
+
+
+              check_automatique(mode,contents[elm],elm)
+
+       });
+}
+
+else
+{
+
+          Swal.fire({
+              title: 'Erreur!',
+              text: 'Verifier que tout les posts ont de contenu ',
+              icon: 'error',
+              confirmButtonText: 'Compris'
+             })
+}
+       
   
 });
 
