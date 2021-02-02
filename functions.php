@@ -40,7 +40,6 @@ function plagia_pdf(){
 
 if(isset($_POST['rapp_id'])){
   $id_rapport=(int)$_POST['rapp_id'];
-
   ob_start();  
 require_once (plugin_dir_path( __FILE__ ).'include/dompdf/autoload.inc.php');
 
@@ -56,7 +55,8 @@ $html = "Rapport ".$res[0]->ref;
 $html.='<h3>Texte</h3>'.$res[0]->texte;
 $html.='<br><br><h3>Réponse</h3>';
 $reponse=json_decode($res[0]->reponse);
-                  $html.= '<H2 style="font-weight:bold;font-size:19px;color:'.getColor($reponse->unique).'">'
+
+                  $html.= '<H2 style="font-weight:bold;font-size:19px;color:'.plagia_getColor($reponse->unique).'">'
                            .$reponse->unique.'% unique</H2>';
                         $html.= '<table border="2px" >';
                         $html.= '<thead><tr>';
@@ -87,8 +87,6 @@ $reponse=json_decode($res[0]->reponse);
 
                        
                         $html .='</tbody></table><br>';
-    
-
 
 $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'landscape');
